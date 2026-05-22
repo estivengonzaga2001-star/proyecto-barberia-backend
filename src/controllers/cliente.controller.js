@@ -60,31 +60,33 @@ exports.create = async (req, res) => {
 };
 // 🔵 ACTUALIZAR CLIENTE
 exports.update = async (req, res) => {
+
   try {
+
     const { id } = req.params;
-    const { id_usuario, fecha_registro } = req.body;
+
+    const { id_usuario } = req.body;
 
     const result = await pool.query(
       `UPDATE barberia.clientes
-       SET id_usuario = $1,
-           fecha_registro = $2
-       WHERE id_cliente = $3
+       SET id_usuario = $1
+       WHERE id_cliente = $2
        RETURNING *`,
-      [id_usuario, fecha_registro, id]
+      [id_usuario, id]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "Cliente no encontrado" });
-    }
+    res.json(result.rows[0]);
 
-    res.json({
-      message: "Cliente actualizado correctamente",
-      cliente: result.rows[0],
-    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al actualizar cliente" });
+
+    console.log(error);
+
+    res.status(500).json({
+      message: "Error al actualizar"
+    });
+
   }
+
 };
 
 // 🔵 ELIMINAR

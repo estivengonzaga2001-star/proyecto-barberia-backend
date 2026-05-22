@@ -15,6 +15,39 @@ exports.create = async (req, res) => {
 
   res.json({ mensaje: "Cita creada" });
 };
+exports.update = async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const { fecha, id_cliente } = req.body;
+
+    const result = await pool.query(
+      `UPDATE barberia.citas
+       SET fecha = $1,
+           id_cliente = $2
+       WHERE id_cita = $3
+       RETURNING *`,
+      [fecha, id_cliente, id]
+    );
+
+    res.json({
+      mensaje: "Cita actualizada",
+      cita: result.rows[0]
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      mensaje: "Error al actualizar cita"
+    });
+
+  }
+
+};
 
 exports.delete = async (req, res) => {
   await pool.query(
